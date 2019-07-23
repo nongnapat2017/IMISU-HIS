@@ -39,7 +39,10 @@ class DatabaseSeeder extends Seeder
 
         $divisionsCount = count($divisions);
 
+        \Log::info($divisionsCount);
+
         factory(App\Patient::class, 100)->create()->each(function ($patient) use ($divisionsCount) {
+            \Log::info($divisionsCount);
             $patient->update([
                 'division_id' => random_int(1, $divisionsCount)
             ]);
