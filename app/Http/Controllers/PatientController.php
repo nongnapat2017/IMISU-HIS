@@ -14,9 +14,24 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
+        $patients = Patient::paginate(20);
+       // return $patients;
+        return view('patients.index')->with(['patients' => $patients]);
     }
 
+    public function search()
+    {
+        $search = request()->search;
+        $sort = request()->sort;
+        $patients = Patient::where('first_name', 'LIKE', '%' . $search . '%')
+                             ->orWhere('last_name','LIKE', '%' . $search . '%')
+                             ->orWhereHas('division',function($query) use($search) {
+                                $query->where('name','LIKE', '%' . $search . '%');
+                             })
+                             ->paginate(5);
+        $patients->appends(['search' => $search, 'sort' => $sort]);
+        return view('patients.index')->with(['patients' => $patients, 'search' => $search]);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -46,7 +61,7 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
-        //
+        
     }
 
     /**
